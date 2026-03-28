@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mercado Inteligente 🛒</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'DM Sans',sans-serif;background:#FDF8F0}
+    :root{--green:#2D5A27;--gl:#E8F0E6;--gm:#4A8A42;--terra:#C4622D;--cream:#FDF8F0;--white:#fff;--text:#1C1C1C;--mu:#6B6B6B;--border:#E4DDD3;--yl:#FEFAE8;--red:#D94040;--rl:#FDEAEA}
+    .app{min-height:100vh;background:var(--cream)}
+    .hdr{background:var(--green);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(45,90,39,.3)}
+    .hbrand{display:flex;align-items:center;gap:10px}
+    .hicon{width:38px;height:38px;background:var(--terra);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:19px}
+    .htitle{font-family:'Playfair Display',serif;font-size:19px;color:#fff;font-weight:700}
+    .hsub{font-size:10px;color:rgba(255,255,255,.6);margin-top:1px}
+    .hstats{display:flex;gap:10px;align-items:center}
+    .spill{background:rgba(255,255,255,.12);border-radius:18px;padding:4px 11px;font-size:10px;color:rgba(255,255,255,.9);text-align:center}
+    .spill strong{display:block;font-size:14px;color:#fff;font-weight:600}
+    @media(max-width:580px){.hstats{display:none}}
+    .nav{background:var(--white);border-bottom:1px solid var(--border);display:flex;overflow-x:auto;scrollbar-width:none}
+    .nav::-webkit-scrollbar{display:none}
+    .ntab{padding:12px 14px;border:none;background:none;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--mu);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;flex-shrink:0}
+    .ntab.active{color:var(--green);border-bottom-color:var(--green)}
+    .cnt{padding:18px;max-width:860px;margin:0 auto}
+    .btn{padding:10px 20px;border-radius:9px;border:none;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:7px}
+    .bp{background:var(--green);color:#fff}.bp:hover{background:var(--gm)}.bp:disabled{opacity:.5;cursor:not-allowed}
+    .bs{background:var(--white);color:var(--text);border:1px solid var(--border)}.bs:hover{border-color:var(--green);color:var(--green)}
+    .bd{background:var(--rl);color:var(--red);border:1px solid #f5c6c6}
+    .bsm{padding:6px 12px;font-size:12px}
+    .card{background:var(--white);border-radius:14px;border:1px solid var(--border);overflow:hidden;margin-bottom:12px}
+    .ch{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+    .ct{font-weight:600;font-size:15px;color:var(--text)}
+    .cb{padding:18px}
+    .uz{border:2px dashed var(--border);border-radius:18px;padding:46px 28px;text-align:center;background:var(--white);transition:all .3s}
+    .uz.drag{border-color:var(--green);background:var(--gl)}
+    .sp{width:46px;height:46px;border:3px solid var(--gl);border-top-color:var(--green);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .sgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:20px}
+    @media(max-width:580px){.sgrid{grid-template-columns:repeat(2,1fr)}}
+    .sc{background:var(--white);border-radius:13px;border:1px solid var(--border);padding:14px}
+    .slb{font-size:10px;color:var(--mu);margin-bottom:4px}
+    .slv{font-size:20px;font-weight:700;color:var(--text)}
+    .swrap{position:relative;margin-bottom:14px}
+    .sbar{width:100%;padding:10px 13px 10px 38px;border:1px solid var(--border);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);background:var(--white);outline:none;transition:border-color .2s}
+    .sbar:focus{border-color:var(--green)}
+    .phc{background:var(--white);border-radius:13px;border:1px solid var(--border);margin-bottom:10px;overflow:hidden}
+    .phch{padding:13px 16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:background .2s}
+    .phch:hover{background:var(--cream)}
+    .phcr{display:flex;align-items:center;gap:9px;flex-shrink:0}
+    .phcb{padding:0 16px 16px;border-top:1px solid var(--border)}
+    .itr{display:flex;align-items:center;gap:4px;font-size:10px;font-weight:600;padding:2px 8px;border-radius:18px}
+    .tup{background:var(--rl);color:var(--red)}.tdown{background:#E8F5E9;color:#2E7D32}.tsame{background:var(--yl);color:#8B6914}.tnew{background:var(--gl);color:var(--green)}
+    .avgline{position:absolute;left:0;right:0;border-top:1.5px dashed var(--terra);pointer-events:none}
+    .ai{display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid var(--border)}
+    .ai:last-child{border-bottom:none}
+    .aic{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+    .at{flex:1;min-width:0}.atit{font-size:13px;font-weight:600;color:var(--text)}.adsc{font-size:11px;color:var(--mu);margin-top:2px;line-height:1.4}
+    .abg{font-size:11px;font-weight:700;padding:3px 9px;border-radius:18px;white-space:nowrap}
+    .invitm{background:var(--white);border:1px solid var(--border);border-radius:11px;padding:12px 15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:9px}
+    .toast{position:fixed;bottom:18px;right:18px;background:var(--green);color:#fff;padding:11px 16px;border-radius:11px;font-size:13px;font-weight:500;box-shadow:0 8px 28px rgba(45,90,39,.35);z-index:1000;animation:sli .3s ease;max-width:280px}
+    .toast.err{background:var(--red)}
+    @keyframes sli{from{transform:translateY(18px);opacity:0}to{transform:translateY(0);opacity:1}}
+    .empty{text-align:center;padding:54px 28px;color:var(--mu)}
+    .setup{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px;background:var(--cream)}
+    .supc{background:var(--white);border-radius:22px;padding:36px;max-width:460px;width:100%;border:1px solid var(--border);box-shadow:0 20px 60px rgba(0,0,0,.07);text-align:center}
+    .supstps{text-align:left;background:var(--cream);border-radius:11px;padding:14px 18px;margin-bottom:18px}
+    .ssi{display:flex;gap:9px;font-size:12px;color:var(--text);margin-bottom:7px;line-height:1.5}
+    .ssi:last-child{margin-bottom:0}
+    .ssn{width:20px;height:20px;border-radius:50%;background:var(--green);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+    .sinp{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;transition:border-color .2s;margin-bottom:12px}
+    .sinp:focus{border-color:var(--green)}
+    /* Shopping list */
+    .slrow{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+    .slinp{flex:1;min-width:160px;padding:10px 13px;border:1px solid var(--border);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;transition:border-color .2s;background:var(--white)}
+    .slinp:focus{border-color:var(--green)}
+    .slitm{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--white);border:1px solid var(--border);border-radius:11px;margin-bottom:8px;transition:all .2s}
+    .slitm.bgt{opacity:.5;border-style:dashed}
+    .slck{width:22px;height:22px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .2s;background:var(--white)}
+    .slck.ck{background:var(--green);border-color:var(--green);color:#fff}
+    .slnm{font-weight:600;font-size:13px;color:var(--text);flex:1}
+    .slnm.bgt{text-decoration:line-through;color:var(--mu)}
+    .slpb{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--mu);margin-bottom:14px;flex-wrap:wrap}
+    .slpbr{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;min-width:80px}
+    .slpbf{height:100%;background:var(--green);border-radius:3px;transition:width .4s}
+    .sltb{background:var(--gl);border-radius:11px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+    .sgdp{position:absolute;top:100%;left:0;right:0;background:var(--white);border:1px solid var(--border);border-radius:9px;box-shadow:0 8px 24px rgba(0,0,0,.1);z-index:50;max-height:200px;overflow-y:auto;margin-top:4px}
+    .sgdi{padding:9px 14px;cursor:pointer;font-size:13px;color:var(--text);display:flex;justify-content:space-between;align-items:center;transition:background .15s}
+    .sgdi:hover{background:var(--cream)}
+    /* Last analysis */
+    .liasm{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:18px}
+    @media(max-width:500px){.liasm{grid-template-columns:repeat(2,1fr)}}
+    .liac{background:var(--white);border-radius:12px;border:1px solid var(--border);padding:13px;text-align:center}
+    .liaitm{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+    .liaitm:last-child{border-bottom:none}
+    .aib{background:linear-gradient(135deg,#E8F0E6 0%,#FDF8F0 100%);border:1px solid var(--gl);border-radius:14px;padding:20px;margin-top:16px;position:relative;overflow:hidden}
+    .aib::before{content:'🤖';position:absolute;top:14px;right:16px;font-size:28px;opacity:.2}
+    .aibtxt{font-size:13px;color:var(--text);line-height:1.75;white-space:pre-wrap}
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect,useCallback,useRef}=React;
+const DBK="mercado_db_v2",KK="mercado_apikey";
+function loadDB(){try{const r=localStorage.getItem(DBK);return r?JSON.parse(r):{invoices:[],items:{},sl:[]}}catch{return{invoices:[],items:{},sl:[]}}}
+function saveDB(d){localStorage.setItem(DBK,JSON.stringify(d))}
+function loadKey(){return localStorage.getItem(KK)||""}
+function saveKey(k){localStorage.setItem(KK,k)}
+function R(v){return"R$ "+Number(v).toFixed(2).replace(".",",")}
+function D(iso){return new Date(iso).toLocaleDateString("pt-BR",{day:"2-digit",month:"short",year:"2-digit"})}
+function hash(s){let h=0;for(let i=0;i<s.length;i++)h=(Math.imul(31,h)+s.charCodeAt(i))|0;return Math.abs(h).toString(36).substring(0,8)}
+function nkey(n){return"i_"+hash(n.toLowerCase().trim())}
+
+async function callAI(messages,apiKey,maxT=2000){
+  const r=await fetch("https://api.anthropic.com/v1/messages",{
+    method:"POST",
+    headers:{"Content-Type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+    body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:maxT,messages})
+  });
+  if(!r.ok){const e=await r.text();throw new Error(`API ${r.status}: ${e.substring(0,120)}`)}
+  const d=await r.json();
+  if(d.error)throw new Error(d.error.message);
+  return d.content?.find(b=>b.type==="text")?.text||""
+}
+
+async function extractInv(b64,mt,key){
+  const today=new Date().toISOString().split("T")[0];
+  const fc=mt==="application/pdf"
+    ?{type:"document",source:{type:"base64",media_type:"application/pdf",data:b64}}
+    :{type:"image",source:{type:"base64",media_type:mt,data:b64}};
+  const p=`Extraia a nota fiscal. Retorne APENAS JSON puro sem markdown:
+{"mercado":"nome","data":"YYYY-MM-DD","total":0.00,"itens":[{"nome":"PRODUTO","quantidade":1,"unidade":"un","preco_unitario":0.00,"preco_total":0.00}]}
+Nomes maiúsculos sem códigos. Data padrão: ${today}. Mercado padrão: "Supermercado". Só JSON.`;
+  const txt=await callAI([{role:"user",content:[fc,{type:"text",text:p}]}],key);
+  const c=txt.replace(/```json|```/g,"").trim();
+  try{return JSON.parse(c)}catch{const m=c.match(/\{[\s\S]*\}/);if(m)return JSON.parse(m[0]);throw new Error("JSON inválido")}
+}
+
+async function analyzeLastInv(invoice,items,key){
+  const withHist=invoice.itens.map(it=>{
+    const k=nkey(it.nome);
+    const hist=(items[k]?.historico||[]).filter(h=>h.invoice_id!==invoice.id);
+    const prices=hist.map(h=>h.preco);
+    const avg=prices.length>1?prices.reduce((a,b)=>a+b,0)/prices.length:null;
+    const min=prices.length>1?Math.min(...prices):null;
+    return{...it,avg,min,nc:prices.length};
+  });
+  const p=`Você é um analista de compras inteligente. Analise esta nota e dê um parecer em português brasileiro.
+
+MERCADO: ${invoice.mercado} | DATA: ${invoice.data} | TOTAL: R$ ${invoice.total}
+
+ITENS:
+${withHist.map(it=>`- ${it.nome}: pago R$ ${it.preco_unitario}/${it.unidade} | ${it.nc>1?`média R$ ${it.avg?.toFixed(2)}, mínimo R$ ${it.min?.toFixed(2)}`:"primeira compra"}`).join("\n")}
+
+Analise em 4 partes com linguagem simples e direta:
+
+1. 📊 RESUMO GERAL — Como foi essa compra? Foi barata, cara ou na média histórica?
+
+2. 🔴 COMPREI CARO — Itens acima da média histórica com percentual. Se sem histórico, mencione isso.
+
+3. 🟢 BOM NEGÓCIO — Itens abaixo da média ou no mínimo histórico.
+
+4. 💡 DICAS PARA PRÓXIMA COMPRA — 3 dicas práticas e específicas baseadas nessa compra.
+
+Seja direto e use linguagem simples. Não use markdown com asteriscos.`;
+  return await callAI([{role:"user",content:p}],key,1200);
+}
+
+function Setup({onSave}){
+  const [k,setK]=useState(""),show=useState(false);
+  const [s,setS]=show;
+  return(
+    <div className="setup">
+      <div className="supc">
+        <div style={{fontSize:52,marginBottom:14}}>🛒</div>
+        <div style={{fontFamily:"'Playfair Display',serif",fontSize:24,color:"var(--text)",marginBottom:7}}>Mercado Inteligente</div>
+        <div style={{fontSize:13,color:"var(--mu)",lineHeight:1.6,marginBottom:24}}>Cole sua chave de API da Anthropic para começar. Só precisa fazer isso uma vez!</div>
+        <div className="supstps">
+          <div className="ssi"><div className="ssn">1</div><div>Acesse <a href="https://console.anthropic.com" target="_blank" style={{color:"var(--green)"}}>console.anthropic.com</a> e crie uma conta</div></div>
+          <div className="ssi"><div className="ssn">2</div><div>Vá em <b>API Keys</b> → <b>Create Key</b> → copie a chave</div></div>
+          <div className="ssi"><div className="ssn">3</div><div>Vá em <b>Billing</b> → adicione US$ 5 de crédito</div></div>
+          <div className="ssi"><div className="ssn">4</div><div>Cole a chave abaixo e clique em Salvar</div></div>
+        </div>
+        <input className="sinp" type={s?"text":"password"} placeholder="sk-ant-api03-..." value={k} onChange={e=>setK(e.target.value)}/>
+        <div style={{display:"flex",gap:9,justifyContent:"center",marginBottom:14}}>
+          <button className="btn bs bsm" onClick={()=>setS(!s)}>{s?"🙈 Ocultar":"👁️ Mostrar"}</button>
+          <button className="btn bp" disabled={k.length<20} onClick={()=>{saveKey(k.trim());onSave(k.trim())}}>✅ Salvar e Começar</button>
+        </div>
+        <div style={{fontSize:11,color:"var(--mu)",lineHeight:1.6}}>🔒 A chave fica salva só no seu navegador.<br/>Custo: ~R$ 0,10 por nota processada.</div>
+      </div>
+    </div>
+  );
+}
+
+function Root(){
+  const [ak,setAk]=useState(()=>loadKey());
+  if(!ak)return<Setup onSave={setAk}/>;
+  return<App apiKey={ak} onReset={()=>{saveKey("");setAk("")}}/>;
+}
+
+function App({apiKey,onReset}){
+  const [tab,setTab]=useState("upload");
+  const [db,setDb]=useState(()=>loadDB());
+  const [drag,setDrag]=useState(false);
+  const [file,setFile]=useState(null);
+  const [prev,setPrev]=useState(null);
+  const [proc,setProc]=useState(false);
+  const [ps,setPs]=useState(0);
+  const [toast,setToast]=useState(null);
+  const [search,setSrch]=useState("");
+  const [exp,setExp]=useState(null);
+  const [cdel,setCdel]=useState(null);
+  const [lia,setLia]=useState(null);
+  const [liaLoad,setLiaLoad]=useState(false);
+  const [slinp,setSlInp]=useState("");
+  const [slshow,setSlshow]=useState(false);
+  const [slf,setSlf]=useState("todos");
+
+  function upd(fn){setDb(p=>{const n=fn(JSON.parse(JSON.stringify(p)));saveDB(n);return n})}
+  function toast_(m,t="ok"){setToast({m,t});setTimeout(()=>setToast(null),3500)}
+
+  const onFile=useCallback(f=>{
+    if(!f)return;setFile(f);
+    const r=new FileReader();r.onload=e=>setPrev(e.target.result);r.readAsDataURL(f);
+  },[]);
+
+  async function processInv(){
+    if(!file)return;
+    setProc(true);setPs(1);
+    try{
+      const b64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>res(e.target.result.split(",")[1]);r.onerror=rej;r.readAsDataURL(file)});
+      setPs(2);
+      const inv=await extractInv(b64,file.type||"image/jpeg",apiKey);
+      setPs(3);
+      const id=Date.now().toString();
+      const dt=inv.data||new Date().toISOString().split("T")[0];
+      upd(db=>{
+        db.invoices.unshift({id,mercado:inv.mercado,data:dt,total:inv.total,itemCount:inv.itens.length,itens:inv.itens});
+        inv.itens.forEach(it=>{
+          const k=nkey(it.nome);
+          if(!db.items[k])db.items[k]={nome:it.nome,historico:[]};
+          db.items[k].historico.unshift({data:dt,preco:it.preco_unitario,preco_total:it.preco_total,quantidade:it.quantidade,unidade:it.unidade,mercado:inv.mercado,invoice_id:id});
+          if(db.items[k].historico.length>10)db.items[k].historico=db.items[k].historico.slice(0,10);
+        });
+        return db;
+      });
+      setPs(4);setLia(null);
+      setTimeout(()=>{setProc(false);setTab("last");toast_(`✅ ${inv.itens.length} itens importados!`);setFile(null);setPrev(null)},700);
+    }catch(err){
+      setProc(false);
+      toast_(`❌ ${err.message?.substring(0,80)||"Erro ao processar"}`,"err");
+    }
+  }
+
+  async function runLia(){
+    if(!db.invoices.length)return;
+    setLiaLoad(true);
+    try{
+      const txt=await analyzeLastInv(db.invoices[0],db.items,apiKey);
+      setLia(txt);
+    }catch(err){toast_(`❌ ${err.message?.substring(0,60)}`,"err")}
+    finally{setLiaLoad(false)}
+  }
+
+  function delInv(id){
+    upd(db=>{
+      db.invoices=db.invoices.filter(i=>i.id!==id);
+      Object.keys(db.items).forEach(k=>{
+        db.items[k].historico=db.items[k].historico.filter(h=>h.invoice_id!==id);
+      });
+      Object.keys(db.items).forEach(k=>{if(db.items[k].historico.length===0)delete db.items[k]});
+      return db;
+    });
+    toast_("🗑️ Nota excluída!");
+  }
+
+  function addSL(name){
+    if(!name.trim())return;
+    const k=nkey(name);
+    const hist=db.items[k]?.historico||[];
+    const prices=hist.map(h=>h.preco);
+    const avg=prices.length?prices.reduce((a,b)=>a+b,0)/prices.length:null;
+    const min=prices.length?Math.min(...prices):null;
+    upd(db=>{
+      if(!db.sl)db.sl=[];
+      db.sl.push({id:Date.now().toString(),name:name.trim(),bought:false,avg,min});
+      return db;
+    });
+    setSlInp("");setSlshow(false);
+    toast_(`✅ "${name.trim()}" adicionado!`);
+  }
+  function toggleSL(id){upd(db=>{const i=db.sl?.find(x=>x.id===id);if(i)i.bought=!i.bought;return db})}
+  function removeSL(id){upd(db=>{db.sl=(db.sl||[]).filter(x=>x.id!==id);return db})}
+  function clearBought(){upd(db=>{db.sl=(db.sl||[]).filter(x=>!x.bought);return db})}
+
+  const allItems=Object.values(db.items).sort((a,b)=>a.nome.localeCompare(b.nome));
+  const filtered=allItems.filter(it=>!search||it.nome.toLowerCase().includes(search.toLowerCase()));
+  function getA(item){
+    const h=item.historico;if(!h.length)return null;
+    const prices=h.map(x=>x.preco);
+    const avg=prices.reduce((a,b)=>a+b,0)/prices.length;
+    const min=Math.min(...prices),max=Math.max(...prices),cur=prices[0],prv=prices[1];
+    const diff=prv!=null?((cur-prv)/prv)*100:null;
+    let trend="new";if(diff!==null){if(diff>3)trend="up";else if(diff<-3)trend="down";else trend="same";}
+    return{avg,min,max,current:cur,diff,trend,vsAvg:((cur-avg)/avg)*100,count:h.length};
+  }
+  const stats={ti:db.invoices.length,tp:allItems.length,ts:db.invoices.reduce((s,i)=>s+(i.total||0),0)};
+  const sl=db.sl||[];
+  const slBought=sl.filter(x=>x.bought).length;
+  const slEst=sl.filter(x=>!x.bought).reduce((s,x)=>s+(x.avg||0),0);
+  const sugg=slinp.length>1?allItems.filter(it=>it.nome.toLowerCase().includes(slinp.toLowerCase())).slice(0,6):[];
+  const slVis=slf==="todos"?sl:slf==="pendentes"?sl.filter(x=>!x.bought):sl.filter(x=>x.bought);
+
+  const lastInv=db.invoices[0];
+  const liaItems=lastInv?.itens?lastInv.itens.map(it=>{
+    const k=nkey(it.nome);
+    const hist=(db.items[k]?.historico||[]).filter(h=>h.invoice_id!==lastInv.id);
+    const prices=hist.map(h=>h.preco);
+    const avg=prices.length?prices.reduce((a,b)=>a+b,0)/prices.length:null;
+    const min=prices.length?Math.min(...prices):null;
+    const vsAvg=avg!=null?((it.preco_unitario-avg)/avg)*100:null;
+    return{...it,avg,min,vsAvg};
+  }).sort((a,b)=>(b.vsAvg||0)-(a.vsAvg||0)):[];
+  const aboveAvg=liaItems.filter(x=>x.vsAvg!=null&&x.vsAvg>5);
+  const belowAvg=liaItems.filter(x=>x.vsAvg!=null&&x.vsAvg<-3);
+  const noHist=liaItems.filter(x=>x.vsAvg==null);
+
+  const alerts=allItems.map(it=>({...it,a:getA(it)})).filter(it=>it.a&&it.a.count>=2).sort((a,b)=>Math.abs(b.a.diff)-Math.abs(a.a.diff)).slice(0,20);
+  const expA=alerts.filter(it=>it.a.diff>10);
+  const chpA=alerts.filter(it=>it.a.diff<-5);
+  const stbA=alerts.filter(it=>Math.abs(it.a.diff)<=3&&it.a.count>=3);
+
+  const ticons={up:"📈",down:"📉",same:"➡️",new:"🆕"};
+  function TB({trend,diff}){
+    const cls={up:"tup",down:"tdown",same:"tsame",new:"tnew"}[trend];
+    const pct=diff!=null?`${diff>0?"+":""}${diff.toFixed(1)}%`:"";
+    return<div className={`itr ${cls}`}>{ticons[trend]} {trend==="new"?"Novo":pct}</div>;
+  }
+  function MC({historico}){
+    if(!historico||!historico.length)return null;
+    const prices=historico.map(h=>h.preco);
+    const mn=Math.min(...prices),mx=Math.max(...prices),rng=mx-mn||1;
+    const avg=prices.reduce((a,b)=>a+b,0)/prices.length;
+    const ap=((avg-mn)/rng)*56;
+    return(
+      <div style={{display:"flex",gap:3,alignItems:"flex-end",height:62,position:"relative",padding:"4px 0 0"}}>
+        <div className="avgline" style={{bottom:ap}} title={`Média: ${R(avg)}`}/>
+        {[...historico].reverse().map((h,i)=>{
+          const hp=rng===0?34:((h.preco-mn)/rng)*52+8;
+          const isL=i===historico.length-1;
+          const col=isL?"#2D5A27":(i>0&&h.preco>[...historico].reverse()[i-1]?.preco?"#D94040":"#4CAF50");
+          return<div key={i} title={`${D(h.data)}: ${R(h.preco)}`} style={{flex:1,height:hp,background:col,borderRadius:"3px 3px 0 0",opacity:isL?1:.75,minWidth:6}}/>;
+        })}
+      </div>
+    );
+  }
+
+  return(
+    <div className="app">
+      <div className="hdr">
+        <div className="hbrand">
+          <div className="hicon">🛒</div>
+          <div><div className="htitle">Mercado Inteligente</div><div className="hsub">Análise de notas com IA</div></div>
+        </div>
+        <div className="hstats">
+          <div className="spill"><strong>{stats.ti}</strong>notas</div>
+          <div className="spill"><strong>{stats.tp}</strong>produtos</div>
+          <div className="spill"><strong>{R(stats.ts)}</strong>total</div>
+          <button onClick={onReset} style={{background:"rgba(255,255,255,.15)",border:"none",color:"#fff",borderRadius:7,padding:"5px 9px",cursor:"pointer",fontSize:11}} title="Trocar chave API">🔑</button>
+        </div>
+      </div>
+
+      <div className="nav">
+        {[{id:"upload",l:"📄 Importar"},{id:"last",l:"🔍 Última Compra"},{id:"list",l:"📝 Lista"},{id:"history",l:"📦 Produtos"},{id:"analysis",l:"📊 Análise"},{id:"invoices",l:"🧾 Notas"}].map(t=>(
+          <button key={t.id} className={`ntab ${tab===t.id?"active":""}`} onClick={()=>setTab(t.id)}>{t.l}</button>
+        ))}
+      </div>
+
+      <div className="cnt">
+
+        {/* UPLOAD */}
+        {tab==="upload"&&(
+          <div>
+            {!file&&!proc&&(
+              <div className={`uz ${drag?"drag":""}`}
+                onDragOver={e=>{e.preventDefault();setDrag(true)}}
+                onDragLeave={()=>setDrag(false)}
+                onDrop={e=>{e.preventDefault();setDrag(false);const f=e.dataTransfer.files[0];if(f)onFile(f)}}>
+                <div style={{fontSize:48,marginBottom:12}}>🧾</div>
+                <div style={{fontFamily:"'Playfair Display',serif",fontSize:19,color:"var(--text)",marginBottom:7}}>Envie sua nota fiscal</div>
+                <div style={{fontSize:13,color:"var(--mu)",lineHeight:1.6}}>Tire uma foto ou selecione o arquivo.<br/>A IA extrai todos os itens e preços.</div>
+                <label htmlFor="nf" style={{display:"inline-flex",alignItems:"center",gap:7,marginTop:22,padding:"12px 30px",background:"var(--green)",color:"#fff",borderRadius:9,fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:600,cursor:"pointer",boxShadow:"0 4px 14px rgba(45,90,39,.3)"}}>
+                  📁 Selecionar Arquivo
+                </label>
+                <input id="nf" type="file" accept="image/*,application/pdf" style={{display:"none"}} onChange={e=>{if(e.target.files?.[0])onFile(e.target.files[0])}}/>
+                <div style={{display:"flex",gap:7,justifyContent:"center",marginTop:14,flexWrap:"wrap"}}>
+                  {["📷 JPG","🖼️ PNG","📑 PDF","🌅 WEBP"].map(t=><span key={t} style={{background:"var(--gl)",color:"var(--green)",padding:"3px 11px",borderRadius:18,fontSize:11,fontWeight:600}}>{t}</span>)}
+                </div>
+              </div>
+            )}
+            {file&&!proc&&(
+              <div className="card">
+                {prev&&prev.startsWith("data:image")&&<img src={prev} alt="" style={{width:"100%",maxHeight:240,objectFit:"cover",borderBottom:"1px solid var(--border)"}}/>}
+                <div style={{padding:"13px 16px",display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:9}}>
+                  <div><div style={{fontWeight:600,fontSize:13}}>{file.name}</div><div style={{fontSize:11,color:"var(--mu)"}}>{(file.size/1024).toFixed(0)} KB</div></div>
+                  <div style={{display:"flex",gap:9}}>
+                    <button className="btn bs bsm" onClick={()=>{setFile(null);setPrev(null)}}>✕ Remover</button>
+                    <button className="btn bp bsm" onClick={processInv}>✨ Processar com IA</button>
+                  </div>
+                </div>
+              </div>
+            )}
+            {proc&&(
+              <div style={{background:"var(--white)",borderRadius:18,padding:38,textAlign:"center",border:"1px solid var(--border)"}}>
+                <div className="sp"/>
+                <div style={{fontFamily:"'Playfair Display',serif",fontSize:18,color:"var(--text)",marginBottom:5}}>Analisando sua nota...</div>
+                <div style={{color:"var(--mu)",fontSize:12,marginBottom:14}}>A IA está lendo e extraindo os dados</div>
+                {["📁 Lendo arquivo","🔍 Enviando para análise","🤖 Extraindo itens e preços","💾 Salvando no histórico"].map((s,i)=>(
+                  <div key={i} style={{display:"flex",alignItems:"center",gap:9,fontSize:12,color:ps>i+1?"var(--green)":ps===i+1?"var(--text)":"var(--mu)",background:"var(--cream)",padding:"7px 13px",borderRadius:7,marginBottom:5,fontWeight:ps===i+1?500:400}}>
+                    {ps>i+1?"✅":ps===i+1?"⏳":"○"} {s}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ÚLTIMA COMPRA */}
+        {tab==="last"&&(
+          <div>
+            {!lastInv?(
+              <div className="empty">
+                <div style={{fontSize:52,marginBottom:12}}>🔍</div>
+                <div style={{fontFamily:"'Playfair Display',serif",fontSize:19,color:"var(--text)",marginBottom:7}}>Nenhuma nota importada</div>
+                <p style={{fontSize:13}}>Importe sua primeira nota para ver a análise aqui.</p>
+                <button className="btn bp" style={{marginTop:18}} onClick={()=>setTab("upload")}>📄 Importar Nota</button>
+              </div>
+            ):(
+              <div>
+                <div className="card" style={{marginBottom:14}}>
+                  <div className="cb" style={{display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:10}}>
+                    <div>
+                      <div style={{fontFamily:"'Playfair Display',serif",fontSize:20,color:"var(--text)",fontWeight:700}}>🏪 {lastInv.mercado}</div>
+                      <div style={{fontSize:12,color:"var(--mu)",marginTop:3}}>📅 {D(lastInv.data)} · {lastInv.itemCount} itens</div>
+                    </div>
+                    <div style={{textAlign:"right"}}>
+                      <div style={{fontSize:22,fontWeight:700,color:"var(--green)"}}>{R(lastInv.total)}</div>
+                      <div style={{fontSize:11,color:"var(--mu)"}}>valor total</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="liasm">
+                  <div className="liac"><div style={{fontSize:10,color:"var(--mu)",marginBottom:4}}>Itens acima da média</div><div style={{fontSize:18,fontWeight:700,color:"var(--red)"}}>{aboveAvg.length}</div></div>
+                  <div className="liac"><div style={{fontSize:10,color:"var(--mu)",marginBottom:4}}>Itens com bom preço</div><div style={{fontSize:18,fontWeight:700,color:"#2E7D32"}}>{belowAvg.length}</div></div>
+                  <div className="liac"><div style={{fontSize:10,color:"var(--mu)",marginBottom:4}}>Sem histórico</div><div style={{fontSize:18,fontWeight:700,color:"var(--mu)"}}>{noHist.length}</div></div>
+                </div>
+
+                {liaItems.length>0&&(
+                  <div className="card" style={{marginBottom:14}}>
+                    <div className="ch"><div className="ct">📋 Itens desta Compra</div><div style={{fontSize:11,color:"var(--mu)"}}>vs. histórico anterior</div></div>
+                    <div className="cb">
+                      {liaItems.map((it,i)=>{
+                        const has=it.vsAvg!=null;
+                        const isAb=has&&it.vsAvg>5,isBl=has&&it.vsAvg<-3;
+                        const dc=!has?"#9E9E9E":isAb?"#D94040":isBl?"#2E7D32":"#F5A623";
+                        const pl=!has?"Sem histórico":isAb?`+${it.vsAvg.toFixed(0)}% acima da média`:isBl?`${it.vsAvg.toFixed(0)}% abaixo da média`:"Na média";
+                        const pb=!has?"var(--cream)":isAb?"var(--rl)":isBl?"#E8F5E9":"var(--yl)";
+                        const pc=!has?"var(--mu)":isAb?"var(--red)":isBl?"#2E7D32":"#8B6914";
+                        return(
+                          <div key={i} className="liaitm">
+                            <div style={{width:10,height:10,borderRadius:"50%",background:dc,flexShrink:0}}/>
+                            <div style={{flex:1,minWidth:0}}>
+                              <div style={{fontSize:13,fontWeight:600,color:"var(--text)"}}>{it.nome}</div>
+                              {has&&<div style={{fontSize:10,color:"var(--mu)"}}>Média hist: {R(it.avg)} | Mín: {R(it.min)}</div>}
+                            </div>
+                            <div style={{textAlign:"right",flexShrink:0}}>
+                              <div style={{fontSize:12,fontWeight:600,color:isAb?"var(--red)":isBl?"#2E7D32":"var(--text)"}}>{R(it.preco_unitario)}</div>
+                              <div style={{fontSize:10,fontWeight:700,padding:"2px 7px",borderRadius:18,background:pb,color:pc,marginTop:3}}>{pl}</div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                <div className="aib">
+                  <div style={{fontFamily:"'Playfair Display',serif",fontSize:16,color:"var(--green)",marginBottom:10,fontWeight:700}}>Análise completa com IA</div>
+                  {liaLoad?(
+                    <div style={{display:"flex",alignItems:"center",gap:10,color:"var(--mu)",fontSize:13}}>
+                      <div className="sp" style={{width:24,height:24,borderWidth:2,margin:0}}/> Analisando sua compra...
+                    </div>
+                  ):lia?(
+                    <div className="aibtxt">{lia}</div>
+                  ):(
+                    <div>
+                      <div style={{fontSize:13,color:"var(--mu)",marginBottom:14,lineHeight:1.6}}>Clique abaixo para receber uma análise detalhada: o que você comprou caro, o que estava barato e dicas de economia personalizadas.</div>
+                      <button className="btn bp" onClick={runLia}>🤖 Analisar com IA</button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* LISTA DE COMPRAS */}
+        {tab==="list"&&(
+          <div>
+            <div className="sltb">
+              <div>
+                <div style={{fontSize:12,color:"var(--green)",fontWeight:500}}>Estimativa (itens pendentes)</div>
+                <div style={{fontSize:18,fontWeight:700,color:"var(--green)"}}>{slEst>0?R(slEst):"—"}</div>
+              </div>
+              <div style={{textAlign:"right"}}>
+                <div style={{fontSize:11,color:"var(--green)"}}>{slBought} de {sl.length} comprados</div>
+                {slBought>0&&<button className="btn bs bsm" style={{marginTop:6}} onClick={clearBought}>🧹 Limpar comprados</button>}
+              </div>
+            </div>
+
+            {sl.length>0&&(
+              <div className="slpb">
+                <span style={{fontSize:12}}>{slBought}/{sl.length}</span>
+                <div className="slpbr"><div className="slpbf" style={{width:`${sl.length?slBought/sl.length*100:0}%`}}/></div>
+                <span style={{fontSize:12}}>{sl.length?Math.round(slBought/sl.length*100):0}% concluído</span>
+              </div>
+            )}
+
+            <div style={{position:"relative",marginBottom:14}}>
+              <div className="slrow">
+                <div style={{flex:1,minWidth:160,position:"relative"}}>
+                  <input className="slinp" style={{width:"100%"}} placeholder="Adicionar produto (ex: Leite Integral)..." value={slinp}
+                    onChange={e=>{setSlInp(e.target.value);setSlshow(true)}}
+                    onFocus={()=>setSlshow(true)}
+                    onKeyDown={e=>{if(e.key==="Enter"&&slinp.trim())addSL(slinp)}}
+                  />
+                  {slshow&&sugg.length>0&&(
+                    <div className="sgdp">
+                      {sugg.map((it,i)=>{
+                        const h=db.items[nkey(it.nome)]?.historico||[];
+                        const prices=h.map(x=>x.preco);
+                        const min=prices.length?Math.min(...prices):null;
+                        return(
+                          <div key={i} className="sgdi" onMouseDown={()=>addSL(it.nome)}>
+                            <span>{it.nome}</span>
+                            {min&&<span style={{fontSize:11,color:"var(--green)",fontWeight:600}}>Mín: {R(min)}</span>}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+                <button className="btn bp" onClick={()=>{if(slinp.trim())addSL(slinp)}} disabled={!slinp.trim()}>+ Adicionar</button>
+              </div>
+            </div>
+
+            <div style={{display:"flex",gap:7,marginBottom:14,flexWrap:"wrap"}}>
+              {["todos","pendentes","comprados"].map(f=>(
+                <button key={f} onClick={()=>setSlf(f)} style={{padding:"5px 13px",borderRadius:18,border:"1px solid var(--border)",background:slf===f?"var(--green)":"var(--white)",color:slf===f?"#fff":"var(--mu)",fontSize:12,fontWeight:500,cursor:"pointer",transition:"all .2s"}}>
+                  {f==="todos"?"Todos":f==="pendentes"?"⏳ Pendentes":"✅ Comprados"}
+                  {f==="pendentes"&&sl.filter(x=>!x.bought).length>0?` (${sl.filter(x=>!x.bought).length})`:""}
+                </button>
+              ))}
+            </div>
+
+            {slVis.length===0?(
+              <div className="empty" style={{padding:"40px 20px"}}>
+                <div style={{fontSize:48,marginBottom:12}}>{sl.length===0?"📝":"✅"}</div>
+                <div style={{fontFamily:"'Playfair Display',serif",fontSize:18,color:"var(--text)",marginBottom:7}}>{sl.length===0?"Lista vazia":"Tudo comprado!"}</div>
+                <p style={{fontSize:13}}>{sl.length===0?"Adicione itens acima! Produtos já comprados terão preço mínimo e média automáticos.":"Parabéns, não esqueceu nada! 🎉"}</p>
+              </div>
+            ):(
+              <div onClick={()=>setSlshow(false)}>
+                {slVis.map(item=>(
+                  <div key={item.id} className={`slitm ${item.bought?"bgt":""}`}>
+                    <div className={`slck ${item.bought?"ck":""}`} onClick={()=>toggleSL(item.id)}>{item.bought?"✓":""}</div>
+                    <div style={{flex:1,minWidth:0}}>
+                      <div className={`slnm ${item.bought?"bgt":""}`}>{item.name}</div>
+                      {item.avg&&<div style={{fontSize:11,color:"var(--mu)"}}>Média: {R(item.avg)}</div>}
+                    </div>
+                    <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:2,flexShrink:0}}>
+                      {item.min&&<div style={{fontSize:12,fontWeight:700,color:"#2E7D32"}}>Mín: {R(item.min)}</div>}
+                      {!item.avg&&<div style={{fontSize:10,color:"var(--mu)"}}>Sem histórico</div>}
+                    </div>
+                    <button onClick={()=>removeSL(item.id)} style={{background:"none",border:"none",cursor:"pointer",color:"var(--mu)",fontSize:16,padding:"2px 4px",flexShrink:0}}>✕</button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {allItems.length>0&&(
+              <div style={{marginTop:18,background:"var(--gl)",borderRadius:12,padding:"14px 16px"}}>
+                <div style={{fontSize:12,fontWeight:600,color:"var(--green)",marginBottom:10}}>💡 Adicionar do seu histórico de produtos:</div>
+                <div style={{display:"flex",gap:7,flexWrap:"wrap"}}>
+                  {allItems.filter(it=>!sl.some(s=>s.name.toLowerCase()===it.nome.toLowerCase())).slice(0,10).map((it,i)=>(
+                    <button key={i} onClick={()=>addSL(it.nome)} style={{padding:"5px 12px",background:"var(--white)",border:"1px solid var(--border)",borderRadius:18,fontSize:12,cursor:"pointer",color:"var(--text)"}}>
+                      + {it.nome}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* PRODUTOS */}
+        {tab==="history"&&(
+          <div>
+            <div className="sgrid">
+              <div className="sc"><div className="slb">Produtos únicos</div><div className="slv">{allItems.length}</div></div>
+              <div className="sc"><div className="slb">Notas importadas</div><div className="slv">{stats.ti}</div></div>
+              <div className="sc"><div className="slb">Gasto total</div><div className="slv" style={{fontSize:16}}>{R(stats.ts)}</div></div>
+              <div className="sc"><div className="slb">Ticket médio</div><div className="slv" style={{fontSize:16}}>{stats.ti?R(stats.ts/stats.ti):"R$ 0,00"}</div></div>
+            </div>
+            {allItems.length===0?(
+              <div className="empty"><div style={{fontSize:52,marginBottom:12}}>📦</div><div style={{fontFamily:"'Playfair Display',serif",fontSize:19,color:"var(--text)",marginBottom:7}}>Nenhum produto ainda</div>
+                <button className="btn bp" style={{marginTop:16}} onClick={()=>setTab("upload")}>📄 Importar Nota</button></div>
+            ):(
+              <>
+                <div className="swrap">
+                  <span style={{position:"absolute",left:12,top:"50%",transform:"translateY(-50%)",fontSize:14,pointerEvents:"none"}}>🔍</span>
+                  <input className="sbar" placeholder="Buscar produto..." value={search} onChange={e=>setSrch(e.target.value)}/>
+                </div>
+                <div>
+                  {filtered.map(item=>{
+                    const a=getA(item);const isE=exp===item.nome;
+                    const prices=item.historico.map(h=>h.preco);
+                    const mn=prices.length?Math.min(...prices):0,mx=prices.length?Math.max(...prices):1,rng=mx-mn||1;
+                    const vrd=a?(a.current<=a.min+rng*.25?{l:"🟢 BARATO",c:"#2E7D32",b:"#E8F5E9"}:a.current>=a.max-rng*.25?{l:"🔴 CARO",c:"#C62828",b:"#FDEAEA"}:{l:"🟡 MÉDIO",c:"#8B6914",b:"#FEFAE8"}):null;
+                    return(
+                      <div key={item.nome} className="phc">
+                        <div className="phch" onClick={()=>setExp(isE?null:item.nome)}>
+                          <div style={{flex:1,minWidth:0}}>
+                            <div style={{display:"flex",alignItems:"center",gap:7,flexWrap:"wrap"}}>
+                              <div style={{fontWeight:600,fontSize:13,color:"var(--text)"}}>{item.nome}</div>
+                              {vrd&&<span style={{fontSize:10,fontWeight:700,padding:"2px 7px",borderRadius:18,background:vrd.b,color:vrd.c,whiteSpace:"nowrap"}}>{vrd.l}</span>}
+                            </div>
+                            {prices.length>0&&(
+                              <div style={{display:"flex",alignItems:"flex-end",gap:3,marginTop:7,height:30}}>
+                                {[...item.historico].reverse().map((h,idx)=>{
+                                  const hp=rng===0?20:((h.preco-mn)/rng)*20+8;
+                                  const isL=idx===item.historico.length-1;
+                                  const col=isL?"#2D5A27":(idx>0&&h.preco>[...item.historico].reverse()[idx-1]?.preco?"#D94040":"#4CAF50");
+                                  return<div key={idx} title={`${D(h.data)}: ${R(h.preco)}`} style={{width:10,height:hp,background:col,borderRadius:"3px 3px 0 0",flexShrink:0,opacity:isL?1:.7}}/>;
+                                })}
+                                {a&&<div style={{marginLeft:5}}><div style={{fontSize:9,color:"var(--terra)",fontWeight:600}}>⌀ {R(a.avg)}</div></div>}
+                              </div>
+                            )}
+                            <div style={{display:"flex",gap:9,marginTop:3,flexWrap:"wrap"}}>
+                              {a&&<span style={{fontSize:10,color:"var(--mu)"}}>Mín: <b style={{color:"#2E7D32"}}>{R(a.min)}</b></span>}
+                              {a&&<span style={{fontSize:10,color:"var(--mu)"}}>Máx: <b style={{color:"#C62828"}}>{R(a.max)}</b></span>}
+                              <span style={{fontSize:10,color:"var(--mu)"}}>{item.historico.length} compra{item.historico.length!==1?"s":""}</span>
+                            </div>
+                          </div>
+                          <div className="phcr">
+                            {a&&<TB trend={a.trend} diff={a.diff}/>}
+                            <div style={{textAlign:"right"}}>
+                              <div style={{fontSize:13,fontWeight:600,color:"var(--green)"}}>{a?R(a.current):"—"}</div>
+                              <div style={{fontSize:9,color:"var(--mu)"}}>atual</div>
+                            </div>
+                            <div style={{fontSize:14,color:"var(--mu)"}}>{isE?"▲":"▼"}</div>
+                          </div>
+                        </div>
+                        {isE&&(
+                          <div className="phcb">
+                            {a&&(
+                              <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:9,margin:"12px 0"}}>
+                                {[["Mínimo",R(a.min),"#2E7D32"],["Média",R(a.avg),"var(--terra)"],["Máximo",R(a.max),"#C62828"]].map(([l,v,c])=>(
+                                  <div key={l} style={{textAlign:"center",background:"var(--cream)",borderRadius:9,padding:"9px 5px"}}>
+                                    <div style={{fontSize:9,color:"var(--mu)"}}>{l}</div>
+                                    <div style={{fontSize:14,fontWeight:700,color:c}}>{v}</div>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                            <div style={{fontSize:10,color:"var(--mu)",fontWeight:600,marginBottom:5}}>HISTÓRICO (linha laranja = média)</div>
+                            <MC historico={item.historico}/>
+                            <div style={{marginTop:9}}>
+                              {item.historico.map((h,i)=>(
+                                <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"6px 0",borderBottom:i<item.historico.length-1?"1px solid var(--border)":"none"}}>
+                                  <div style={{fontSize:11,color:"var(--text)"}}>{D(h.data)}</div>
+                                  <div style={{fontSize:10,color:"var(--mu)"}}>{h.mercado}</div>
+                                  <div style={{fontSize:12,fontWeight:600,color:i===0?"var(--green)":"var(--text)"}}>{R(h.preco)} <span style={{fontSize:9,fontWeight:400,color:"var(--mu)"}}>/{h.unidade}</span></div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+          </div>
+        )}
+
+        {/* ANÁLISE */}
+        {tab==="analysis"&&(
+          <div>
+            {allItems.length===0?(
+              <div className="empty"><div style={{fontSize:52,marginBottom:12}}>📊</div><div style={{fontFamily:"'Playfair Display',serif",fontSize:19,color:"var(--text)",marginBottom:7}}>Sem dados para análise</div>
+                <button className="btn bp" style={{marginTop:16}} onClick={()=>setTab("upload")}>📄 Importar Nota</button></div>
+            ):(
+              <div style={{display:"flex",flexDirection:"column",gap:12}}>
+                {expA.length>0&&(
+                  <div className="card">
+                    <div className="ch"><div className="ct">🚨 Preços em Alta</div><div style={{fontSize:11,color:"var(--mu)"}}>vs. compra anterior</div></div>
+                    <div className="cb">{expA.slice(0,8).map((it,i)=>(
+                      <div key={i} className="ai">
+                        <div className="aic" style={{background:"var(--rl)"}}>📈</div>
+                        <div className="at"><div className="atit">{it.nome}</div><div className="adsc">Antes: {R(it.historico[1]?.preco)} → Agora: {R(it.a.current)}</div></div>
+                        <div className="abg" style={{background:"var(--rl)",color:"var(--red)"}}>+{it.a.diff.toFixed(1)}%</div>
+                      </div>
+                    ))}</div>
+                  </div>
+                )}
+                {chpA.length>0&&(
+                  <div className="card">
+                    <div className="ch"><div className="ct">✅ Bom Momento p/ Comprar</div></div>
+                    <div className="cb">{chpA.slice(0,8).map((it,i)=>(
+                      <div key={i} className="ai">
+                        <div className="aic" style={{background:"#E8F5E9"}}>📉</div>
+                        <div className="at"><div className="atit">{it.nome}</div><div className="adsc">Antes: {R(it.historico[1]?.preco)} → Agora: {R(it.a.current)}</div></div>
+                        <div className="abg" style={{background:"#E8F5E9",color:"#2E7D32"}}>{it.a.diff.toFixed(1)}%</div>
+                      </div>
+                    ))}</div>
+                  </div>
+                )}
+                {stbA.length>0&&(
+                  <div className="card">
+                    <div className="ch"><div className="ct">➡️ Preços Estáveis</div></div>
+                    <div className="cb">{stbA.slice(0,6).map((it,i)=>(
+                      <div key={i} className="ai">
+                        <div className="aic" style={{background:"var(--yl)"}}>🏷️</div>
+                        <div className="at"><div className="atit">{it.nome}</div><div className="adsc">Média: {R(it.a.avg)} · {it.a.count} compras</div></div>
+                        <div className="abg" style={{background:"var(--yl)",color:"#8B6914"}}>Estável</div>
+                      </div>
+                    ))}</div>
+                  </div>
+                )}
+                <div className="card">
+                  <div className="ch"><div className="ct">💰 Maiores Gastos</div></div>
+                  <div className="cb">
+                    {allItems.map(it=>({...it,tg:it.historico.reduce((s,h)=>s+(h.preco_total||h.preco*h.quantidade),0)}))
+                      .sort((a,b)=>b.tg-a.tg).slice(0,8).map((it,i)=>{
+                        const mx=Math.max(...allItems.map(x=>x.historico.reduce((s,h)=>s+(h.preco_total||h.preco*h.quantidade),0)));
+                        return(
+                          <div key={i} className="ai">
+                            <div style={{width:20,height:20,borderRadius:"50%",background:"var(--gl)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,fontWeight:700,color:"var(--green)",flexShrink:0}}>{i+1}</div>
+                            <div className="at">
+                              <div className="atit">{it.nome}</div>
+                              <div style={{height:3,background:"var(--border)",borderRadius:3,marginTop:4,overflow:"hidden"}}><div style={{height:"100%",width:`${mx?(it.tg/mx)*100:0}%`,background:"var(--green)",borderRadius:3}}/></div>
+                            </div>
+                            <div className="abg" style={{background:"var(--gl)",color:"var(--green)"}}>{R(it.tg)}</div>
+                          </div>
+                        );
+                      })}
+                  </div>
+                </div>
+                {alerts.length===0&&<div className="empty"><div style={{fontSize:52,marginBottom:12}}>📊</div><p style={{fontSize:13}}>Importe 2+ notas do mesmo produto para ver análises comparativas.</p></div>}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* NOTAS */}
+        {tab==="invoices"&&(
+          <div>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16,flexWrap:"wrap",gap:10}}>
+              <div><div style={{fontFamily:"'Playfair Display',serif",fontSize:20,color:"var(--text)"}}>Notas Importadas</div><div style={{fontSize:12,color:"var(--mu)",marginTop:3}}>{db.invoices.length} nota(s)</div></div>
+              <button className="btn bp bsm" onClick={()=>setTab("upload")}>+ Importar Nova</button>
+            </div>
+            {!db.invoices.length?(
+              <div className="empty"><div style={{fontSize:52,marginBottom:12}}>🧾</div><div style={{fontFamily:"'Playfair Display',serif",fontSize:19,color:"var(--text)",marginBottom:7}}>Nenhuma nota ainda</div></div>
+            ):(
+              <div style={{display:"flex",flexDirection:"column",gap:9}}>
+                {db.invoices.map((inv,i)=>(
+                  <div key={i} style={{border:"1px solid var(--border)",borderRadius:11,overflow:"hidden",background:"var(--white)"}}>
+                    <div className="invitm" style={{border:"none",borderRadius:0}}>
+                      <div>
+                        <div style={{fontWeight:600,fontSize:13}}>🏪 {inv.mercado}</div>
+                        <div style={{fontSize:11,color:"var(--mu)",marginTop:2}}>📅 {D(inv.data)}</div>
+                      </div>
+                      <div style={{display:"flex",alignItems:"center",gap:12}}>
+                        <div style={{textAlign:"right"}}>
+                          <div style={{fontSize:15,fontWeight:700,color:"var(--green)"}}>{R(inv.total)}</div>
+                          <div style={{fontSize:11,color:"var(--mu)"}}>{inv.itemCount} itens</div>
+                        </div>
+                        {cdel===inv.id?(
+                          <div style={{display:"flex",gap:7}}>
+                            <button className="btn bd bsm" onClick={()=>{delInv(inv.id);setCdel(null)}}>✓ Excluir</button>
+                            <button className="btn bs bsm" onClick={()=>setCdel(null)}>Cancelar</button>
+                          </div>
+                        ):(
+                          <button className="btn bd bsm" onClick={()=>setCdel(inv.id)}>🗑️</button>
+                        )}
+                      </div>
+                    </div>
+                    {cdel===inv.id&&<div style={{background:"var(--rl)",padding:"7px 15px",fontSize:11,color:"var(--red)",borderTop:"1px solid #f5c6c6"}}>⚠️ Os preços dessa nota serão removidos do histórico de todos os produtos.</div>}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {toast&&<div className={`toast ${toast.t==="err"?"err":""}`}>{toast.m}</div>}
+    </div>
+  );
+}
+
+ReactDOM.render(<Root/>,document.getElementById("root"));
+</script>
+</body>
+</html>
